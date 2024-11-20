@@ -37,10 +37,10 @@ typedef struct thread_pool_t* tpool;// OOP-like
 tpool tpool_init(int num_threads);
 
 /**
- * @brief Add a work to the work queue
+ * @brief Add a job to the job queue
  * 
- * In multi-threads programming, we usually pack a function and its argument as a work.
- * You can add the work to the work queue to let a thread execute the function.
+ * In multi-threads programming, we usually pack a function and its argument as a job.
+ * You can add the job to the job queue to let a thread execute the function.
  * If you want to add a function with more than one arguments, the way to implement this
  * is to pass a pointer to a structure.
  * 
@@ -55,32 +55,32 @@ tpool tpool_init(int num_threads);
  * {
  *     ...
  *     int a = 10;
- *     tpool_add_work(pool, (void*)print_num, (void*)a);
+ *     tpool_add_job(pool, (void*)print_num, (void*)a);
  *     ...
  * }
  * 
- * @param tpool    thread pool the work added to
- * @param work_func    pointer to the function which you want to execute
+ * @param tpool    thread pool the job added to
+ * @param job_func    pointer to the function which you want to execute
  * @param arg    pointer to the argument of the function
  * 
  * @return 0 on suceess, -1 otherwise
  */
-int tpool_add_work(tpool, void (*work_func)(void*), void* arg);
+int tpool_add_job(tpool, void (*job_func)(void*), void* arg);
 
 /**
- * @brief Wait for all works to finish
+ * @brief Wait for all jobs to finish
  * 
- * The calling thread will be blocked to wait all works -- both queued and running to finish.
- * Once the queue is empty and all works have been finished, the calling thread will continue.
+ * The calling thread will be blocked to wait all jobs -- both queued and running to finish.
+ * Once the queue is empty and all jobs have been finished, the calling thread will continue.
  * 
  * @example
  * 
  * tpool pool = tpool_init(8);
  * ...
- * // Add a brunch of works
+ * // Add a brunch of jobs
  * ...
  * tpool_wait(pool);
- * printf("All works have been finished\n");
+ * printf("All jobs have been finished\n");
  * ...
  * 
  * @param tpool    the thread pool to wait for
@@ -94,7 +94,7 @@ void tpool_wait(tpool);
  * Block all threads no matter whether they are idle or running.
  * Threads will return their previous state once tpool_unblock() is called.
  * 
- * NOTICE: You can add works to the work queue when threads are blocked.
+ * NOTICE: You can add jobs to the job queue when threads are blocked.
  * 
  * @example
  * 
@@ -102,7 +102,7 @@ void tpool_wait(tpool);
  * tpool_block(pool);
  * 
  * ...
- * // Add a brunch of works
+ * // Add a brunch of jobs
  * ...
  * 
  * tpool_unblock(pool);// Threads will continue
@@ -130,7 +130,7 @@ void tpool_unblock(tpool);
 /**
  * @brief Destroy the thread pool
  * 
- * Wait for all working threads to finish, then shutdown the thread pool and free up memory.
+ * Wait for all jobing threads to finish, then shutdown the thread pool and free up memory.
  * 
  * @example
  * 
@@ -148,7 +148,7 @@ void tpool_destroy(tpool);
 /**
  * @brief Get number of working threads
  * 
- * Working threads are threads which are performing works(not idle).
+ * Working threads are threads which are performing jobs(not idle).
  * 
  * @example
  * 
